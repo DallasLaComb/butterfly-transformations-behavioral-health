@@ -1,0 +1,88 @@
+name: CD
+
+on:
+  push:
+    branches: [main, master]
+
+permissions:
+  id-token: write   # required for OIDC auth with AWS
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- Node / Angular build ---
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: butterfly-app/package-lock.json
+
+      - name: Install dependencies
+        working-directory: butterfly-app
+        run: npm ci
+
+      - name: Build
+        working-directory: butterfly-app
+        run: npm run build -- --configuration production
+
+      # --- AWS auth (OIDC — no long-lived keys) ---
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      # --- SAM: deploy / update infrastructure ---
+      - name: Setup Python (for SAM CLI)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install SAM CLI
+        run: pip install aws-sam-cli
+
+      - name: SAM deploy infrastructure
+        working-directory: infrastructure
+        run: sam deploy --config-file samconfig.toml --no-confirm-changeset
+
+      # --- Read stack outputs so we don't hardcode bucket/distribution ---
+      - name: Read stack outputs
+        id: stack
+        run: |
+          STACK_NAME="butterfly-transformations"
+          BUCKET=$(aws cloudformation describe-stacks \
+            --stack-name $STACK_NAME \
+            --query "Stacks[0].Outputs[?OutputKey=='BucketName'].OutputValue" \
+            --output text)
+          DIST_ID=$(aws cloudformation describe-stacks \
+            --stack-name $STACK_NAME \
+            --query "Stacks[0].Outputs[?OutputKey=='DistributionId'].OutputValue" \
+            --output text)
+          echo "bucket=$BUCKET" >> $GITHUB_OUTPUT
+          echo "distribution_id=$DIST_ID" >> $GITHUB_OUTPUT
+
+      # --- Sync Angular build to S3 ---
+      - name: Sync to S3
+        run: |
+          # Hashed asset files: long-lived immutable cache
+          aws s3 sync butterfly-app/dist/butterfly-app/browser/ s3://${{ steps.stack.outputs.bucket }}/ \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "index.html"
+          # index.html: never cache so users always get the latest shell
+          aws s3 cp butterfly-app/dist/butterfly-app/browser/index.html \
+            s3://${{ steps.stack.outputs.bucket }}/index.html \
+            --cache-control "no-cache, no-store, must-revalidate"
+
+      # --- Bust CloudFront edge cache ---
+      - name: Invalidate CloudFront cache
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id ${{ steps.stack.outputs.distribution_id }} \
+            --paths "/*"

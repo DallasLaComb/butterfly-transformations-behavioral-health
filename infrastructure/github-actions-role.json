@@ -1,0 +1,93 @@
+{
+  "Comment": "Paste this into IAM > Roles > Create Role > Custom trust policy.",
+  "TrustPolicy": {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "Federated": "arn:aws:iam::121416078382:oidc-provider/token.actions.githubusercontent.com"
+        },
+        "Action": "sts:AssumeRoleWithWebIdentity",
+        "Condition": {
+          "StringLike": {
+            "token.actions.githubusercontent.com:sub": "repo:DallasLaComb/butterfly-transformations-behavioral-health:ref:refs/heads/main"
+          },
+          "StringEquals": {
+            "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+          }
+        }
+      }
+    ]
+  },
+  "PermissionsPolicy": {
+    "Comment": "Attach this inline or managed policy to the role.",
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "SAMDeploy",
+        "Effect": "Allow",
+        "Action": [
+          "cloudformation:CreateStack",
+          "cloudformation:UpdateStack",
+          "cloudformation:DescribeStacks",
+          "cloudformation:DescribeStackEvents",
+          "cloudformation:DescribeStackResource",
+          "cloudformation:DescribeStackResources",
+          "cloudformation:GetTemplate",
+          "cloudformation:ValidateTemplate",
+          "cloudformation:CreateChangeSet",
+          "cloudformation:DescribeChangeSet",
+          "cloudformation:ExecuteChangeSet",
+          "cloudformation:DeleteChangeSet"
+        ],
+        "Resource": "*"
+      },
+      {
+        "Sid": "SAMArtifactsBucket",
+        "Effect": "Allow",
+        "Action": [
+          "s3:CreateBucket",
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:ListBucket",
+          "s3:DeleteObject"
+        ],
+        "Resource": "*"
+      },
+      {
+        "Sid": "WebsiteS3Sync",
+        "Effect": "Allow",
+        "Action": [
+          "s3:PutObject",
+          "s3:DeleteObject",
+          "s3:GetObject",
+          "s3:ListBucket",
+          "s3:PutBucketPolicy",
+          "s3:GetBucketPolicy",
+          "s3:PutBucketVersioning",
+          "s3:PutPublicAccessBlock",
+          "s3:GetPublicAccessBlock"
+        ],
+        "Resource": [
+          "arn:aws:s3:::butterfly-transformations-website-121416078382",
+          "arn:aws:s3:::butterfly-transformations-website-121416078382/*"
+        ]
+      },
+      {
+        "Sid": "CloudFront",
+        "Effect": "Allow",
+        "Action": [
+          "cloudfront:CreateDistribution",
+          "cloudfront:UpdateDistribution",
+          "cloudfront:GetDistribution",
+          "cloudfront:TagResource",
+          "cloudfront:CreateOriginAccessControl",
+          "cloudfront:GetOriginAccessControl",
+          "cloudfront:CreateInvalidation"
+        ],
+        "Resource": "*"
+      }
+    ]
+  }
+}

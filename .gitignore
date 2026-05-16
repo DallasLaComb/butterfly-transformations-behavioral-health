@@ -1,0 +1,25 @@
+# Angular build output
+butterfly-app/dist/
+butterfly-app/tmp/
+butterfly-app/out-tsc/
+
+# Angular cache
+butterfly-app/.angular/cache/
+
+# Node
+butterfly-app/node_modules/
+npm-debug.log
+yarn-error.log
+
+# IDEs
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+
+# System
+.DS_Store
+Thumbs.db

@@ -1,0 +1,11 @@
+[default.global.parameters]
+stack_name = "butterfly-transformations"
+region = "us-east-1"
+
+[default.deploy.parameters]
+stack_name = "butterfly-transformations"
+region = "us-east-1"
+resolve_s3 = true
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = false
+fail_on_empty_changeset = false
