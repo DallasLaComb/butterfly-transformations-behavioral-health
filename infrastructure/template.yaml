@@ -5,11 +5,17 @@ Description: Butterfly Transformations Behavioral Health - S3 + CloudFront stati
 Parameters:
   DomainName:
     Type: String
-    Description: Primary domain name (e.g. butterflytransformations.com)
+    Description: Primary domain name (e.g. butterflytransformations.health)
+    Default: 'butterflytransformations.health'
+
+  AcmCertificateArn:
+    Type: String
+    Description: ARN of the ACM certificate for the domain (must be in us-east-1)
     Default: ''
 
 Conditions:
   HasDomain: !Not [!Equals [!Ref DomainName, '']]
+  HasCert: !Not [!Equals [!Ref AcmCertificateArn, '']]
 
 Resources:
 
@@ -96,6 +102,13 @@ Resources:
           - HasDomain
           - [!Ref DomainName, !Sub 'www.${DomainName}']
           - !Ref AWS::NoValue
+
+        ViewerCertificate: !If
+          - HasCert
+          - AcmCertificateArn: !Ref AcmCertificateArn
+            SslSupportMethod: sni-only
+            MinimumProtocolVersion: TLSv1.2_2021
+          - CloudFrontDefaultCertificate: true
 
 Outputs:
   BucketName:
