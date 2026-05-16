@@ -1,5 +1,6 @@
 {
-  "Comment": "Paste this into IAM > Roles > Create Role > Custom trust policy.",
+  "_readme": "This file contains two separate policies. Paste TrustPolicy when editing the role trust relationship. Paste PermissionsPolicy as an inline policy on the role.",
+
   "TrustPolicy": {
     "Version": "2012-10-17",
     "Statement": [
@@ -11,7 +12,7 @@
         "Action": "sts:AssumeRoleWithWebIdentity",
         "Condition": {
           "StringLike": {
-            "token.actions.githubusercontent.com:sub": "repo:DallasLaComb/butterfly-transformations-behavioral-health:ref:refs/heads/main"
+            "token.actions.githubusercontent.com:sub": "repo:DallasLaComb/butterfly-transformations-behavioral-health:ref:refs/heads/master"
           },
           "StringEquals": {
             "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
@@ -20,8 +21,8 @@
       }
     ]
   },
+
   "PermissionsPolicy": {
-    "Comment": "Attach this inline or managed policy to the role.",
     "Version": "2012-10-17",
     "Statement": [
       {
