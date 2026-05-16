@@ -11,3 +11,4 @@ resolve_s3 = true
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = false
 fail_on_empty_changeset = false
+parameter_overrides = "DomainName=butterflytransformations.health AcmCertificateArn=PASTE_CERT_ARN_HERE"
