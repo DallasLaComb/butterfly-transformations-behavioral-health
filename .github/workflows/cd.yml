@@ -2,7 +2,7 @@ name: CD
 
 on:
   push:
-    branches: [main, master]
+    branches: [master]
 
 permissions:
   id-token: write   # required for OIDC auth with AWS
