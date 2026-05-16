@@ -11,7 +11,7 @@ Parameters:
   AcmCertificateArn:
     Type: String
     Description: ARN of the ACM certificate for the domain (must be in us-east-1)
-    Default: ''
+    Default: 'arn:aws:acm:us-east-1:121416078382:certificate/b029bb41-1a69-4e56-8896-00c92f32934a'
 
 Conditions:
   HasDomain: !Not [!Equals [!Ref DomainName, '']]
@@ -99,7 +99,7 @@ Resources:
             ErrorCachingMinTTL: 0
 
         Aliases: !If
-          - HasDomain
+          - HasCert
           - [!Ref DomainName, !Sub 'www.${DomainName}']
           - !Ref AWS::NoValue
 

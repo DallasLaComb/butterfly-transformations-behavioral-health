@@ -43,7 +43,7 @@ Once the cert is issued, copy the ARN from ACM (looks like `arn:aws:acm:us-east-
 Open `infrastructure/samconfig.toml` and replace `PASTE_CERT_ARN_HERE` with the ARN:
 
 ```toml
-parameter_overrides = "DomainName=butterflytransformations.health AcmCertificateArn=arn:aws:acm:us-east-1:121416078382:certificate/xxxx-xxxx"
+parameter_overrides = "DomainName=butterflytransformations.health AcmCertificateArn=arn:aws:acm:us-east-1:121416078382:certificate/b029bb41-1a69-4e56-8896-00c92f32934a"
 ```
 
 Push to `master` — the CD pipeline will run `sam deploy` and attach the cert to CloudFront.
