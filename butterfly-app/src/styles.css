@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+@theme {
+  --color-sage: #7a9e7e;
+  --color-sage-dark: #4a6b4e;
+  --color-sage-light: #c8ddc9;
+  --color-cream: #faf7f2;
+  --color-stone: #6b6560;
+
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+}
