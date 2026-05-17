@@ -40,7 +40,8 @@
           "cloudformation:CreateChangeSet",
           "cloudformation:DescribeChangeSet",
           "cloudformation:ExecuteChangeSet",
-          "cloudformation:DeleteChangeSet"
+          "cloudformation:DeleteChangeSet",
+          "cloudformation:GetTemplateSummary"
         ],
         "Resource": "*"
       },
