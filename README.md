@@ -11,6 +11,18 @@ Live at **https://butterflytransformations.health**
 
 ---
 
+## Scope
+
+**This is a static frontend advertising site and nothing more.** There is no backend, no
+database, no API, no authentication, and no user data of any kind — the project collects,
+stores, and processes nothing. It is strictly a set of public static files (HTML, CSS, JS,
+fonts, and images) built by Angular and served from S3 through CloudFront.
+
+Booking and contact are handled by linking out to external services, so no visitor information
+ever touches this project. Nothing here is in scope for PHI or client records.
+
+---
+
 ## Why I built it this way
 
 I wanted my mom to have a real, professional web presence without a monthly website-builder
